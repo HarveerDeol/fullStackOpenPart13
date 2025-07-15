@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { Blog } = require('../models')
 
-// Centralized error handler middleware
+
 const errorHandler = (error, req, res, next) => {
   console.error(error.message)
 
@@ -13,7 +13,7 @@ const errorHandler = (error, req, res, next) => {
   return res.status(500).json({ error: 'Something went wrong' })
 }
 
-// Middleware to find blog by ID
+
 const blogFinder = async (req, res, next) => {
   try {
     const blog = await Blog.findByPk(req.params.id)
@@ -26,7 +26,7 @@ const blogFinder = async (req, res, next) => {
   }
 }
 
-// Routes
+
 router.get('/api/blogs', async (req, res, next) => {
   try {
     const blogs = await Blog.findAll()

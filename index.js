@@ -1,18 +1,23 @@
-require('dotenv').config()
-const { Sequelize, Model, DataTypes } = require('sequelize')
+const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 
+app.use(express.json())
+
+app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 const express = require('express')
 const app = express()
-
 
 const { PORT } = require('./util/config')
 const { connectToDatabase } = require('./util/db')
 
-const notesRouter = require('./controllers/notes')
+const blogsRouter = require('./controllers/blogs')
 
 app.use(express.json())
 
-app.use('/api/notes', notesRouter)
+app.use('/api/blogs', blogsRouter)
 
 const start = async () => {
   await connectToDatabase()
@@ -22,15 +27,3 @@ const start = async () => {
 }
 
 start()
-
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, // ❗️Use false in dev only
-    },
-  },
-});
-
-
