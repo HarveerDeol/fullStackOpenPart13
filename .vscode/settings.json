@@ -1,0 +1,20 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true,
+                    "requestCert": false
+                }
+            },
+            "previewLimit": 50,
+            "server": "postgresql://fso_part_13_flaf_user:KmK2bNKTtBYp45AeL1POnE113FfDrVE8@dpg-d1r7k7ruibrs73f8i4ig-a.oregon-postgres.render.com/fso_part_13_flaf",
+            "driver": "PostgreSQL",
+            "username": "fso_part_13_user",
+            "database": "fso_part_13",
+            "name": "FSO P13",
+            "connectString": "postgresql://fso_part_13_flaf_user:KmK2bNKTtBYp45AeL1POnE113FfDrVE8@dpg-d1r7k7ruibrs73f8i4ig-a.oregon-postgres.render.com/fso_part_13_flaf",
+            "password": "KmK2bNKTtBYp45AeL1POnE113FfDrVE8"
+        }
+    ]
+}
