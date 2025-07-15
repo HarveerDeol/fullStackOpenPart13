@@ -1,50 +1,74 @@
-const router = require('express').Router()
+const express = require('express')
+const router = express.Router()
 const { Blog } = require('../models')
 
-const blogFinder = async (req, res, next) => {
-    req.blog = await Blog.findByPk(req.params.id)
-    next()
+// Centralized error handler middleware
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message)
+
+  if (error.name === 'SequelizeValidationError') {
+    return res.status(400).json({ error: error.message })
   }
 
-router.get('/api/blogs', async (req, res) => {
-    const blogs = await Blog.findAll()
-    console.log(blogs.map(b=>b.toJSON()))
-    res.json(blogs)
-  })
+  return res.status(500).json({ error: 'Something went wrong' })
+}
 
-router.get('/api/notes/:id', async (req, res) => {
-    if (req.blog) {
-        console.log(req.blog.toJSON())
-        res.json(req.blog)
-    } else {
-        res.status(404).end()
-    }
-    })
-  
-router.post('/api/blogs', async (req, res) => {
-    try {
-    const blog = await Blog.create(req.body)
-    return res.json(blog)
-    } catch(error) {
-    return res.status(400).json({ error })
-    }
+// Middleware to find blog by ID
+const blogFinder = async (req, res, next) => {
+  try {
+    const blog = await Blog.findByPk(req.params.id)
+    if (!blog) return res.status(404).json({ error: 'Blog not found' })
+
+    req.blog = blog
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Routes
+router.get('/api/blogs', async (req, res, next) => {
+  try {
+    const blogs = await Blog.findAll()
+    res.json(blogs)
+  } catch (error) {
+    next(error)
+  }
 })
 
-router.delete('/:id', async (req, res) => {
-    if (req.blog) {
-      await req.blog.destroy()
-    }
-    res.status(204).end()
-  })
+router.get('/api/blogs/:id', blogFinder, (req, res) => {
+  res.json(req.blog)
+})
 
-router.put('/api/blogs/:id', async (req, res) => {
-    if (req.blog) {
-        req.blog.likes = req.body.likes
-        await req.blog.save()
-        res.json(req.blog)
-    } else {
-        res.status(404).end()
-    }
-    })
+router.post('/api/blogs', async (req, res, next) => {
+  try {
+    const blog = await Blog.create(req.body)
+    res.status(201).json(blog)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.put('/api/blogs/:id', blogFinder, async (req, res, next) => {
+  try {
+    req.blog.likes = req.body.likes
+    await req.blog.save()
+    res.json(req.blog)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.delete('/api/blogs/:id', blogFinder, async (req, res, next) => {
+  try {
+    await req.blog.destroy()
+    res.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+})
+
+// Register error handler
+router.use(errorHandler)
 
 module.exports = router
