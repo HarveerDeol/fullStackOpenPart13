@@ -13,38 +13,43 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   },
 });
 
-class Note extends Model {}
-Note.init({
+
+class Blog extends Model {}
+Blog.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  content: {
+  author: {
+    type: DataTypes.BOOLEAN
+  },
+  url: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  title: {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  important: {
-    type: DataTypes.BOOLEAN
-  },
-  date: {
-    type: DataTypes.DATE
+  likes: {
+    type: DataTypes.INT
   }
 }, {
   sequelize,
   underscored: true,
   timestamps: false,
-  modelName: 'note'
+  modelName: 'blog'
 })
 
-app.get('/api/notes', async (req, res) => {
-  const notes = await Note.findAll()
+app.get('/api/blogs', async (req, res) => {
+  const blogs = await Blog.findAll()
   res.json(notes)
 })
 
-app.post('/api/notes', async (req, res) => {
+app.post('/api/blogs', async (req, res) => {
     try {
-      const note = await Note.create(req.body)
+      const blog = await Blog.create(req.body)
       return res.json(note)
     } catch(error) {
       return res.status(400).json({ error })
