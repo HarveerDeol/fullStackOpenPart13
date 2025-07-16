@@ -30,7 +30,9 @@ const blogFinder = async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    const blogs = await Blog.findAll()
+    const blogs = await Blog.findAll({
+      order: sequelize.literal('max(likes) DESC')}
+    )
     res.json(blogs)
   } catch (error) {
     next(error)
