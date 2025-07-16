@@ -15,7 +15,7 @@ const tokenExtractor = (req, res, next) => {
     next()
   }
 
-  router.get('/', async (req, res) => {
+  router.get('/api/users', async (req, res) => {
     const notes = await Note.findAll({
       attributes: { exclude: ['userId'] },
       include: {
@@ -26,7 +26,7 @@ const tokenExtractor = (req, res, next) => {
     res.json(notes)
   })
 
-router.post('/', tokenExtractor, async (req, res) => {
+router.post('/api/users', tokenExtractor, async (req, res) => {
     try {
         const user = await User.findByPk(req.decodedToken.id)
         const note = await Note.create({...req.body, userId: user.id, date: new Date()})
@@ -36,7 +36,9 @@ router.post('/', tokenExtractor, async (req, res) => {
       }
     })
 
-router.get('/:id', async (req, res) => {
+
+
+router.get('/api/users/:id', async (req, res) => {
   const user = await User.findByPk(req.params.id)
   if (user) {
     res.json(user)

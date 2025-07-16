@@ -11,10 +11,10 @@ Blog.init({
     autoIncrement: true
   },
   author: {
-    type: DataTypes.BOOLEAN
+    type: DataTypes.TEXT
   },
   url: {
-    type: DataTypes.DATE,
+    type: DataTypes.TEXT,
     allowNull: false
   },
   title: {
