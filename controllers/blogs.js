@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { Blog } = require('../models')
+const { Op } = require('sequelize')
 
 
 const errorHandler = (error, req, res, next) => {
@@ -27,7 +28,7 @@ const blogFinder = async (req, res, next) => {
 }
 
 
-router.get('/api/blogs', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const blogs = await Blog.findAll()
     res.json(blogs)
@@ -36,20 +37,33 @@ router.get('/api/blogs', async (req, res, next) => {
   }
 })
 
+
+
 router.get('/', async (req, res) => {
+  const search = req.query.search
+
+  const where = search
+    ? {
+        [Op.or]: [
+          { title: { [Op.iLike]: `%${search}%` } },
+          { author: { [Op.iLike]: `%${search}%` } }
+        ]
+      }
+    : {}
+
   const blogs = await Blog.findAll({
-    attributes: { exclude: ['id'] },
+    attributes: { exclude: ['userId'] },
     include: {
       model: User,
       attributes: ['name']
     },
-
-    where: {
-      important: req.query.important === "true"
-    }
+    where
   })
-  res.json(notes)
+
+  res.json(blogs)
 })
+
+
 
 router.get('/api/blogs/:id', blogFinder, (req, res) => {
   res.json(req.blog)
