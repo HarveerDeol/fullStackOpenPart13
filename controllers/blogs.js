@@ -36,6 +36,21 @@ router.get('/api/blogs', async (req, res, next) => {
   }
 })
 
+router.get('/', async (req, res) => {
+  const blogs = await Blog.findAll({
+    attributes: { exclude: ['id'] },
+    include: {
+      model: User,
+      attributes: ['name']
+    },
+
+    where: {
+      important: req.query.important === "true"
+    }
+  })
+  res.json(notes)
+})
+
 router.get('/api/blogs/:id', blogFinder, (req, res) => {
   res.json(req.blog)
 })
